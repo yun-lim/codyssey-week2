@@ -302,6 +302,22 @@ class QuizGame:
                 hint_info = f', 힌트 {hints}회' if hints > 0 else ''
                 print(f'    {i}. [{date}] {total}문제 중 {correct}문제 정답 ({score}점{hint_info}){best_mark}')
 
+    def delete_quiz(self):
+        """등록된 퀴즈를 선택하여 삭제한다."""
+        if not self.quizzes:
+            print('\n    삭제할 퀴즈가 없습니다.')
+            return
+
+        self.list_quizzes()
+        index = self._get_number_input(
+            f'\n    삭제할 퀴즈 번호 (1-{len(self.quizzes)}): ',
+            1, len(self.quizzes),
+        )
+
+        removed = self.quizzes.pop(index - 1)
+        self.save_data()
+        print(f'\n    퀴즈 [{removed.question}]이(가) 삭제되었습니다.')
+
     def show_menu(self):
         """메인 메뉴를 화면에 출력한다."""
         print('\n    ========================================')
@@ -331,7 +347,7 @@ class QuizGame:
                 elif choice == 4:
                     self.show_score()
                 elif choice == 5:
-                    print('\n    [퀴즈 삭제 - 미구현]')
+                    self.delete_quiz()
                 elif choice == 6:
                     self.save_data()
                     print('\n    게임을 종료합니다. 안녕히 가세요!')
