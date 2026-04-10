@@ -282,6 +282,26 @@ class QuizGame:
             print(f'    [{i}] {quiz.question}')
         print('    ----------------------------------------')
 
+    def show_score(self):
+        """최고 점수와 게임 기록 히스토리를 출력한다."""
+        if self.best_score is None:
+            print('\n    아직 퀴즈를 풀지 않았습니다.')
+            return
+
+        print(f'\n    최고 점수: {self.best_score}점')
+
+        if self.score_history:
+            print('\n    --- 게임 기록 ---')
+            for i, record in enumerate(self.score_history, 1):
+                date = record.get('date', '기록 없음')
+                total = record.get('total', '?')
+                correct = record.get('correct', '?')
+                score = record.get('score', '?')
+                hints = record.get('hints_used', 0)
+                best_mark = ' [최고]' if record.get('is_best') else ''
+                hint_info = f', 힌트 {hints}회' if hints > 0 else ''
+                print(f'    {i}. [{date}] {total}문제 중 {correct}문제 정답 ({score}점{hint_info}){best_mark}')
+
     def show_menu(self):
         """메인 메뉴를 화면에 출력한다."""
         print('\n    ========================================')
@@ -309,7 +329,7 @@ class QuizGame:
                 elif choice == 3:
                     self.list_quizzes()
                 elif choice == 4:
-                    print('\n    [점수 확인 - 미구현]')
+                    self.show_score()
                 elif choice == 5:
                     print('\n    [퀴즈 삭제 - 미구현]')
                 elif choice == 6:
