@@ -320,8 +320,11 @@ class QuizGame:
 
     def show_menu(self):
         """메인 메뉴를 화면에 출력한다."""
+        count = len(self.quizzes)
+        score_info = f' | 최고 {self.best_score}점' if self.best_score is not None else ''
         print('\n    ========================================')
         print('            나만의 퀴즈 게임')
+        print(f'    퀴즈 {count}개{score_info}')
         print('    ========================================')
         print('    1. 퀴즈 풀기')
         print('    2. 퀴즈 추가')
