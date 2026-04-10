@@ -1,0 +1,17 @@
+# Mission spec
+MISSION.md
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# State file (auto-generated)
+state.json
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
