@@ -270,6 +270,18 @@ class QuizGame:
         self.save_data()
         print('\n    퀴즈가 추가되었습니다!')
 
+    def list_quizzes(self):
+        """등록된 퀴즈 목록을 출력한다."""
+        if not self.quizzes:
+            print('\n    등록된 퀴즈가 없습니다.')
+            return
+
+        print(f'\n    등록된 퀴즈 목록 (총 {len(self.quizzes)}개)')
+        print('    ----------------------------------------')
+        for i, quiz in enumerate(self.quizzes, 1):
+            print(f'    [{i}] {quiz.question}')
+        print('    ----------------------------------------')
+
     def show_menu(self):
         """메인 메뉴를 화면에 출력한다."""
         print('\n    ========================================')
@@ -295,7 +307,7 @@ class QuizGame:
                 elif choice == 2:
                     self.add_quiz()
                 elif choice == 3:
-                    print('\n    [퀴즈 목록 - 미구현]')
+                    self.list_quizzes()
                 elif choice == 4:
                     print('\n    [점수 확인 - 미구현]')
                 elif choice == 5:
