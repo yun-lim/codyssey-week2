@@ -2,6 +2,8 @@
 
 import json
 import os
+import random
+from datetime import datetime
 
 
 STATE_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'state.json')
@@ -165,6 +167,89 @@ class QuizGame:
                 return raw
             print('    입력이 비어 있습니다. 다시 입력하세요.')
 
+    def play_quiz(self):
+        """퀴즈를 랜덤 출제하고 점수를 계산한다."""
+        if not self.quizzes:
+            print('\n    등록된 퀴즈가 없습니다. 먼저 퀴즈를 추가하세요.')
+            return
+
+        total = len(self.quizzes)
+        print(f'\n    총 {total}개의 퀴즈가 있습니다.')
+        count = self._get_number_input(
+            f'    몇 문제를 풀겠습니까? (1-{total}): ', 1, total
+        )
+
+        selected = random.sample(self.quizzes, count)
+        score = 0
+        hints_used = 0
+
+        print(f'\n    퀴즈를 시작합니다! (총 {count}문제)')
+
+        for i, quiz in enumerate(selected, 1):
+            print('\n    ----------------------------------------')
+            quiz.display(number=i)
+
+            if quiz.hint:
+                print('\n    (힌트를 보려면 0을 입력하세요)')
+
+            answer = self._get_answer_with_hint(quiz)
+
+            if answer == -1:
+                hints_used += 1
+                answer = self._get_number_input('    정답 입력: ', 1, 4)
+
+            if quiz.check_answer(answer):
+                print('    정답입니다!')
+                score += 1
+            else:
+                print(f'    오답입니다. 정답은 {quiz.answer}번입니다.')
+
+        hint_penalty = hints_used * 0.5
+        final_score = max(0, score - hint_penalty)
+        percentage = int((final_score / count) * 100)
+
+        print('\n    ========================================')
+        print(f'    결과: {count}문제 중 {score}문제 정답! ({percentage}점)')
+        if hints_used > 0:
+            print(f'    (힌트 {hints_used}회 사용, 감점 {hint_penalty}점)')
+
+        is_new_best = False
+        if self.best_score is None or percentage > self.best_score:
+            self.best_score = percentage
+            is_new_best = True
+            print('    새로운 최고 점수입니다!')
+        print('    ========================================')
+
+        record = {
+            'date': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            'total': count,
+            'correct': score,
+            'hints_used': hints_used,
+            'score': percentage,
+            'is_best': is_new_best,
+        }
+        self.score_history.append(record)
+        self.save_data()
+
+    def _get_answer_with_hint(self, quiz):
+        """정답 입력을 받되, 힌트가 있으면 0번으로 힌트를 볼 수 있다."""
+        while True:
+            try:
+                raw = input('\n    정답 입력: ').strip()
+                if not raw:
+                    print('    입력이 비어 있습니다. 1-4 사이의 숫자를 입력하세요.')
+                    continue
+                num = int(raw)
+                if num == 0 and quiz.hint:
+                    print(f'\n    힌트: {quiz.hint}')
+                    return -1
+                if num < 1 or num > 4:
+                    print('    잘못된 입력입니다. 1-4 사이의 숫자를 입력하세요.')
+                    continue
+                return num
+            except ValueError:
+                print('    잘못된 입력입니다. 1-4 사이의 숫자를 입력하세요.')
+
     def show_menu(self):
         """메인 메뉴를 화면에 출력한다."""
         print('\n    ========================================')
@@ -186,7 +271,7 @@ class QuizGame:
                 choice = self._get_number_input('    선택: ', 1, 6)
 
                 if choice == 1:
-                    print('\n    [퀴즈 풀기 - 미구현]')
+                    self.play_quiz()
                 elif choice == 2:
                     print('\n    [퀴즈 추가 - 미구현]')
                 elif choice == 3:
