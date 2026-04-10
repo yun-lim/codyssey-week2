@@ -1,4 +1,4 @@
-"""Quiz and QuizGame classes for the console quiz game."""
+"""퀴즈 게임의 Quiz, QuizGame 클래스 정의 모듈."""
 
 import json
 import os
@@ -53,7 +53,7 @@ DEFAULT_QUIZZES = [
 
 
 class Quiz:
-    """Represents a single quiz question with choices and an answer."""
+    """개별 퀴즈 한 문제를 표현하는 클래스."""
 
     def __init__(self, question, choices, answer, hint=''):
         self.question = question
@@ -62,7 +62,7 @@ class Quiz:
         self.hint = hint
 
     def display(self, number=None):
-        """Display the quiz question and choices."""
+        """퀴즈 문제와 선택지를 화면에 출력한다."""
         if number is not None:
             print(f'\n    [문제 {number}]')
         print(f'    {self.question}\n')
@@ -70,11 +70,11 @@ class Quiz:
             print(f'    {i}. {choice}')
 
     def check_answer(self, user_answer):
-        """Check if the user's answer is correct."""
+        """사용자의 답이 정답인지 확인한다."""
         return user_answer == self.answer
 
     def to_dict(self):
-        """Convert quiz to dictionary for JSON serialization."""
+        """퀴즈를 딕셔너리로 변환한다 (JSON 저장용)."""
         data = {
             'question': self.question,
             'choices': self.choices,
@@ -86,10 +86,79 @@ class Quiz:
 
     @classmethod
     def from_dict(cls, data):
-        """Create a Quiz instance from a dictionary."""
+        """딕셔너리로부터 Quiz 인스턴스를 생성한다."""
         return cls(
             question=data['question'],
             choices=data['choices'],
             answer=data['answer'],
             hint=data.get('hint', ''),
         )
+
+
+class QuizGame:
+    """퀴즈 게임 전체를 관리하는 클래스 (메뉴, 풀기, 추가, 목록, 점수, 저장/불러오기)."""
+
+    def __init__(self):
+        self.quizzes = []
+        self.best_score = None
+        self.score_history = []
+
+    def _get_number_input(self, prompt, min_val, max_val):
+        """범위 내 숫자 입력을 검증하여 반환한다."""
+        while True:
+            try:
+                raw = input(prompt).strip()
+                if not raw:
+                    print(f'    입력이 비어 있습니다. {min_val}-{max_val} 사이의 숫자를 입력하세요.')
+                    continue
+                num = int(raw)
+                if num < min_val or num > max_val:
+                    print(f'    잘못된 입력입니다. {min_val}-{max_val} 사이의 숫자를 입력하세요.')
+                    continue
+                return num
+            except ValueError:
+                print(f'    잘못된 입력입니다. {min_val}-{max_val} 사이의 숫자를 입력하세요.')
+
+    def _get_text_input(self, prompt):
+        """비어 있지 않은 텍스트 입력을 반환한다."""
+        while True:
+            raw = input(prompt).strip()
+            if raw:
+                return raw
+            print('    입력이 비어 있습니다. 다시 입력하세요.')
+
+    def show_menu(self):
+        """메인 메뉴를 화면에 출력한다."""
+        print('\n    ========================================')
+        print('            나만의 퀴즈 게임')
+        print('    ========================================')
+        print('    1. 퀴즈 풀기')
+        print('    2. 퀴즈 추가')
+        print('    3. 퀴즈 목록')
+        print('    4. 점수 확인')
+        print('    5. 퀴즈 삭제')
+        print('    6. 종료')
+        print('    ========================================')
+
+    def run(self):
+        """메인 게임 루프."""
+        try:
+            while True:
+                self.show_menu()
+                choice = self._get_number_input('    선택: ', 1, 6)
+
+                if choice == 1:
+                    print('\n    [퀴즈 풀기 - 미구현]')
+                elif choice == 2:
+                    print('\n    [퀴즈 추가 - 미구현]')
+                elif choice == 3:
+                    print('\n    [퀴즈 목록 - 미구현]')
+                elif choice == 4:
+                    print('\n    [점수 확인 - 미구현]')
+                elif choice == 5:
+                    print('\n    [퀴즈 삭제 - 미구현]')
+                elif choice == 6:
+                    print('\n    게임을 종료합니다. 안녕히 가세요!')
+                    break
+        except (KeyboardInterrupt, EOFError):
+            print('\n\n    프로그램을 안전하게 종료합니다.')
