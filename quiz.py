@@ -102,6 +102,44 @@ class QuizGame:
         self.quizzes = []
         self.best_score = None
         self.score_history = []
+        self.load_data()
+
+    def load_data(self):
+        """state.json에서 퀴즈 데이터를 불러온다. 파일이 없거나 손상되면 기본 데이터를 사용한다."""
+        try:
+            with open(STATE_FILE, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            self.quizzes = [Quiz.from_dict(q) for q in data.get('quizzes', [])]
+            self.best_score = data.get('best_score', None)
+            self.score_history = data.get('score_history', [])
+            count = len(self.quizzes)
+            score_info = f', 최고점수 {self.best_score}점' if self.best_score is not None else ''
+            print(f'    저장된 데이터를 불러왔습니다. (퀴즈 {count}개{score_info})')
+        except FileNotFoundError:
+            self._load_defaults()
+            print('    저장 파일이 없어 기본 퀴즈 데이터를 사용합니다.')
+        except (json.JSONDecodeError, KeyError, TypeError):
+            self._load_defaults()
+            print('    저장 파일이 손상되어 기본 퀴즈 데이터로 초기화합니다.')
+
+    def _load_defaults(self):
+        """기본 퀴즈 데이터를 로드한다."""
+        self.quizzes = [Quiz.from_dict(q) for q in DEFAULT_QUIZZES]
+        self.best_score = None
+        self.score_history = []
+
+    def save_data(self):
+        """퀴즈 데이터를 state.json에 저장한다."""
+        data = {
+            'quizzes': [q.to_dict() for q in self.quizzes],
+            'best_score': self.best_score,
+            'score_history': self.score_history,
+        }
+        try:
+            with open(STATE_FILE, 'w', encoding='utf-8') as f:
+                json.dump(data, f, ensure_ascii=False, indent=4)
+        except OSError as e:
+            print(f'\n    저장 중 오류가 발생했습니다: {e}')
 
     def _get_number_input(self, prompt, min_val, max_val):
         """범위 내 숫자 입력을 검증하여 반환한다."""
@@ -158,7 +196,9 @@ class QuizGame:
                 elif choice == 5:
                     print('\n    [퀴즈 삭제 - 미구현]')
                 elif choice == 6:
+                    self.save_data()
                     print('\n    게임을 종료합니다. 안녕히 가세요!')
                     break
         except (KeyboardInterrupt, EOFError):
+            self.save_data()
             print('\n\n    프로그램을 안전하게 종료합니다.')
