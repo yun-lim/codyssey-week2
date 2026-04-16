@@ -242,3 +242,43 @@ state.json이 손상된 경우(JSON 파싱 실패, 필수 키 누락, 타입 불
 클래스 기반 설계 덕분에 대부분의 변경은 해당 클래스의 메서드 수정이나 추가로 대응할 수 있으며, 프로그램 전체를 재작성할 필요가 없습니다.
 
 > clone/pull 실습을 통해 원격 저장소와 로컬 저장소 간 동기화를 확인했습니다.
+
+## Git 제출 증빙
+
+- GitHub 저장소: https://github.com/yun-lim/codyssey-week2
+- 총 커밋 수: `15개` (`git rev-list --count HEAD` 기준, 10개 이상 충족)
+- 브랜치/병합 근거: `main` 브랜치에 기능 브랜치 병합 커밋이 존재
+- origin 설정: `origin/main` 추적 브랜치
+- Clone/Pull 실습 근거: `clone`/`pull` 작업 후 증분 커밋이 기록되어 있음
+
+### git log --oneline --graph 예시
+
+```text
+* 632f4a1 Docs: clone/pull 실습 확인 메모 추가
+*   8fff7a3 Merge: feature/refactor-display 브랜치 병합 (메뉴 상태 표시 개선)
+|\  
+| * 548b40b Refactor: 메뉴에 퀴즈/점수 상태 요약 표시
+|/  
+* baf7d08 Docs: README 최종 작성 (설계, 기술 원리, 한계/확장성 포함)
+* c12bab4 Feat: 퀴즈 삭제 기능 구현
+* 2a75def Feat: 점수 확인 및 게임 히스토리 기능 구현
+* a909e6f Feat: 퀴즈 목록 기능 구현
+* 2ea8592 Feat: 퀴즈 추가 기능 구현
+* 30e884a Feat: 퀴즈 풀기 기능 구현 (랜덤 출제, 힌트, 점수 계산)
+* 26ba2da Feat: 파일 저장/불러오기 기능 구현 (state.json)
+* 07eb020 Feat: QuizGame 클래스 메뉴 기능 및 main.py 진입점 추가
+* 9c1e6c2 Feat: Quiz 클래스 및 기본 퀴즈 데이터 작성 (영어 구동사 7개)
+* 3809d0a Docs: 퀴즈 주제 선정 내용 추가
+* a7b6631 Docs: 프로젝트 개요 작성
+* 696e6d2 cloned remote repo, initial commit
+```
+
+### 제출용 근거 파일(권장)
+- `docs/screenshots/git_log_command.txt`: 위 출력 결과 저장
+- `docs/screenshots/git_commit_count.txt`: `git rev-list --count HEAD` 결과 저장
+
+### 실행 화면 스크린샷
+- `docs/screenshots/menu.png`: 실행 즉시 메뉴 화면
+- `docs/screenshots/play.png`: 퀴즈 풀이 화면(문제/선택지/결과)
+- `docs/screenshots/add_quiz.png`: 퀴즈 추가 입력 및 등록 완료 화면
+- `docs/screenshots/score.png`: 점수 확인 화면(최고 점수/기록)
